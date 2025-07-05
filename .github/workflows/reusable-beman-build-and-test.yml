@@ -27,6 +27,7 @@ jobs:
         config: ${{ fromJson(needs.configure_test_matrix.outputs.matrix) }}
     name: "${{ matrix.config.compiler }} ${{ matrix.config.version }} ${{ matrix.config.cxxversion }} ${{ matrix.config.stdlib }} ${{ matrix.config.test }}"
     runs-on: "${{ ((matrix.config.compiler == 'gcc' || matrix.config.compiler == 'clang') && 'ubuntu-latest') || (matrix.config.compiler == 'appleclang' && 'macos-latest') || (matrix.config.compiler == 'msvc' && 'windows-latest') }}"
+    container: ${{ matrix.config.image }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -68,6 +69,9 @@ jobs:
             Dynamic)
               echo "cmake_extra_args=-DBUILD_SHARED_LIBS=on" >> "$GITHUB_OUTPUT" ;;
           esac
+      - name: Check parameters
+        shell: bash
+        run: echo ${{ matrix.config.compiler }} ${{ matrix.config.version }} ${{ matrix.config.cxxversion }} ${{ matrix.config.stdlib }} ${{ matrix.config.test }} ${{ steps.vars.outputs.cpp_version }} ${{ steps.vars.outputs.toolchain_file }} ${{ steps.var.outputs.image }} ${{ steps.vars.outputs.build_config }} ${{ steps.vars.outputs.cmake_extra_args }}
       - name: Build and Test
         uses: ./.github/actions/cmake-build-test
         with:
@@ -75,5 +79,3 @@ jobs:
           toolchain_file: ${{ steps.vars.outputs.toolchain_file }}
           build_config: ${{ steps.vars.outputs.build_config }}
           cmake_extra_args: ${{ steps.vars.outputs.cmake_extra_args }}
-      - name: Check parameters
-        run: ./foo.sh ${{ matrix.config.compiler }} ${{ matrix.config.version }} ${{ matrix.config.cxxversion }} ${{ matrix.config.stdlib }} ${{ matrix.config.test }} ${{ steps.vars.outputs.cpp_version }} ${{ steps.vars.outputs.toolchain_file }} ${{ steps.vars.outputs.build_config }} ${{ steps.vars.outputs.cmake_extra_args }}
