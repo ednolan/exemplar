@@ -20,6 +20,7 @@ def main():
                                 for stdlib_test in cxxversion_test["tests"]:
                                     test = {
                                         "compiler": compiler,
+                                        "version": version,
                                         "cxxversion": cxxversion,
                                         "stdlib": stdlib,
                                         "test": stdlib_test
