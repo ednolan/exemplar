@@ -31,11 +31,24 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Print parameters
+        shell: bash
+        run: echo ${{ matrix.config.compiler }} ${{ matrix.config.version }} ${{ matrix.config.cxxversion }} ${{ matrix.config.stdlib }} ${{ matrix.config.test }}
       - name: Setup MSVC
-        if: startsWith(matrix.platform.os, 'windows')
+        if: ${{ matrix.config.compiler }} == 'msvc'
         uses: TheMrMilchmann/setup-msvc-dev@v3
         with:
           arch: x64
+      - name: Setup Macos
+        if: ${{ matrix.config.compiler }} == 'appleclang'
+        shell: bash
+        run: sudo chmod -R 777 /opt/
+      - name: Print installed software
+        shell: bash
+        run: |
+          echo "Build system:"
+          cmake --version
+          ninja --version
       - name: Process configuration
         id: vars
         shell: bash
@@ -69,13 +82,29 @@ jobs:
             Dynamic)
               echo "cmake_extra_args=-DBUILD_SHARED_LIBS=on" >> "$GITHUB_OUTPUT" ;;
           esac
-      - name: Check parameters
+      - name: Print parameters
         shell: bash
         run: echo ${{ matrix.config.compiler }} ${{ matrix.config.version }} ${{ matrix.config.cxxversion }} ${{ matrix.config.stdlib }} ${{ matrix.config.test }} ${{ steps.vars.outputs.cpp_version }} ${{ steps.vars.outputs.toolchain_file }} ${{ steps.var.outputs.image }} ${{ steps.vars.outputs.build_config }} ${{ steps.vars.outputs.cmake_extra_args }}
-      - name: Build and Test
-        uses: ./.github/actions/cmake-build-test
-        with:
-          cpp_version: ${{ steps.vars.outputs.cpp_version }}
-          toolchain_file: ${{ steps.vars.outputs.toolchain_file }}
-          build_config: ${{ steps.vars.outputs.build_config }}
-          cmake_extra_args: ${{ steps.vars.outputs.cmake_extra_args }}
+      - name: Configure CMake
+        shell: bash
+        run: |
+          cmake \
+            -B build \
+            -S . \
+            -DCMAKE_CXX_STANDARD=${{ steps.var.outputs.cpp_version }} \
+            -DCMAKE_TOOLCHAIN_FILE="${{ steps.vars.outputs.toolchain_file }}" \
+            -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="./infra/cmake/use-fetch-content.cmake" \
+            ${{ steps.vars.outputs.cmake_extra_args }}
+        env:
+          CMAKE_GENERATOR: "Ninja Multi-Config"
+      - name: Build
+        shell: bash
+        run: |
+          cmake --build build --config ${{ steps.vars.outputs.build_config }} --parallel --verbose
+          cmake --build build --config ${{ steps.vars.outputs.build_config }} --target all_verify_interface_header_sets
+          cmake --install build --config ${{ steps.vars.outputs.build_config }} --prefix /opt/beman.package
+          ls -R /opt/beman.package
+      - name: Test
+        if: ${{ !inputs.disable_test }}
+        shell: bash
+        run: ctest --test-dir build --build-config ${{ steps.vars.outputs.build_config }}
