@@ -118,8 +118,9 @@ unless provided compiler support **C++20** or ranges capabilities enabled.
 
 This project officially supports:
 
-* GNU GCC Compiler \[version 12-14\]
-* LLVM Clang++ Compiler \[version 17-20\]
+* GNU GCC Compiler \[version 11-15\]
+* LLVM Clang++ Compiler with libstdc++ or libc++ \[version 17-20\]
+  * (Note: Clang 17 with libstdc++ is not supported in C++23/C++26 mode)
 * AppleClang compiler on Mac OS
 * MSVC compiler on Windows
 
