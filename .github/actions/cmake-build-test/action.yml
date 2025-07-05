@@ -7,11 +7,11 @@ inputs:
     required: true
   toolchain_file:
     required: true
+  build_config:
+    required: true
   cmake_extra_args:
     description: 'extra cmake arguments'
     Default: ''
-  disable_test:
-    Default: false
 runs:
   using: 'composite'
   steps:
@@ -55,7 +55,3 @@ runs:
         cmake --build build --config Debug --target all_verify_interface_header_sets
         cmake --install build --config Debug --prefix /opt/beman.package
         ls -R /opt/beman.package
-    - name: Test Debug
-      if: ${{ !inputs.disable_test }}
-      shell: bash
-      run: ctest --test-dir build --build-config Debug

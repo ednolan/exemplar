@@ -30,5 +30,50 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Setup MSVC
+        if: startsWith(matrix.platform.os, 'windows')
+        uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
+      - name: Process configuration
+        id: vars
+        shell: bash
+        run: |
+          cxxversion=${{ matrix.config.cxxversion }}
+          echo "cpp_version=${cxxversion#c++}" >> "$GITHUB_OUTPUT"
+          case ${{ matrix.config.compiler }} in
+            gcc) echo "toolchain_file=infra/cmake/gnu-toolchain.cmake" >> "$GITHUB_OUTPUT" ;;
+            clang*)
+              case ${{ matrix.config.stdlib }} in
+                libstdc++)
+                  echo "toolchain_file=infra/cmake/llvm-toolchain.cmake" >> "$GITHUB_OUTPUT" ;;
+                libc++)
+                  echo "toolchain_file=infra/cmake/llvm-libc++-toolchain.cmake" >> "$GITHUB_OUTPUT" ;;
+              esac ;;
+            appleclang)
+              echo "toolchain_file=infra/cmake/appleclang-toolchain.cmake" >> "$GITHUB_OUTPUT" ;;
+            msvc)
+              echo "toolchain_file=infra/cmake/msvc-toolchain.cmake" >> "$GITHUB_OUTPUT" ;;
+          esac
+          test=${{ matrix.config.test }}
+          echo "build_config=${test%%-*}" >> "$GITHUB_OUTPUT"
+          test_type=${test##*-}
+          case $test_type in
+            TSan)
+              echo "cmake_extra_args=-DBEMAN_BUILDSYS_SANITIZER=TSan" >> "$GITHUB_OUTPUT" ;;
+            MaxSan)
+              echo "cmake_extra_args=-DBEMAN_BUILDSYS_SANITIZER=MaxSan" >> "$GITHUB_OUTPUT" ;;
+            Werror)
+              echo "cmake_extra_args=-DCMAKE_CXX_FLAGS='-Werror=all -Werror=extra'" >> "$GITHUB_OUTPUT" ;;
+            Dynamic)
+              echo "cmake_extra_args=-DBUILD_SHARED_LIBS=on" >> "$GITHUB_OUTPUT" ;;
+          esac
+      # - name: Build and Test
+      #   uses: ./.github/actions/cmake-build-test
+      #   with:
+      #     cpp_version: ${{ steps.vars.outputs.cpp_version }}
+      #     toolchain_file: ${{ steps.vars.outputs.toolchain_file }}
+      #     build_config: ${{ steps.vars.outputs.build_config }}
+      #     cmake_extra_args: ${{ steps.vars.outputs.cmake_extra_args }}
       - name: Build and test
-        run: ./foo.sh ${{ matrix.config.compiler }} ${{ matrix.config.version }} ${{ matrix.config.cxxversion }} ${{ matrix.config.stdlib }} ${{ matrix.config.test }}
+        run: ./foo.sh ${{ matrix.config.compiler }} ${{ matrix.config.version }} ${{ matrix.config.cxxversion }} ${{ matrix.config.stdlib }} ${{ matrix.config.test }} ${{ steps.vars.outputs.cpp_version }} ${{ steps.vars.outputs.toolchain_file }} ${{ steps.vars.outputs.build_config }} ${{ steps.vars.outputs.cmake_extra_args }}
