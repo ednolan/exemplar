@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+name: 'Beman build-and-test matrix'
+on:
+  workflow_call:
+    inputs:
+      matrix_config:
+        description: 'JSON specification of tests to run'
+        type: string
+        required: true
+jobs:
+  configure_test_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: set-matrix
+        run: |
+          matrix=$(echo '${{ inputs.matrix_config }}' | ./transform.py)
+          echo "matrix=$(echo $matrix)" >> $GITHUB_OUTPUT
+  test_matrix:
+    needs: configure_test_matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJson(needs.configure_test_matrix.outputs.matrix) }}
+    name: "${{ matrix.config.compiler }} ${{ matrix.config.version }} ${{ matrix.config.cxxversion }} ${{ matrix.config.stdlib }} ${{ matrix.config.test }}"
+    runs-on: "${{ ((matrix.config.compiler == 'gcc' || matrix.config.compiler == 'clang') && 'ubuntu-latest') || (matrix.config.compiler == 'appleclang' && 'macos-latest') || (matrix.config.compiler == 'msvc' && 'windows-latest') }}"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Build and test
+        run: ./foo.sh ${{ matrix.config.compiler }} ${{ matrix.config.version }} ${{ matrix.config.cxxversion }} ${{ matrix.config.stdlib }} ${{ matrix.config.test }}
