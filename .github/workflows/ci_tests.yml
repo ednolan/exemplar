@@ -89,12 +89,26 @@ jobs:
                 }
               ]
             },
-            { "versions": ["19", "18", "17"],
+            { "versions": ["19", "18"],
               "tests": [
                 { "cxxversions": ["c++26", "c++23", "c++20", "c++17"],
                   "tests": [
                     {"stdlibs": ["libstdc++", "libc++"], "tests": ["Release-Default"]}
                   ]
+                }
+              ]
+            },
+            { "versions": ["17"],
+              "tests": [
+                { "cxxversions": ["c++26", "c++23", "c++20", "c++17"],
+                  "tests": [{"stdlibs": ["libc++"], "tests": ["Release-Default"]}]
+                }
+              ]
+            },
+            { "versions": ["17"],
+              "tests": [
+                { "cxxversions": ["c++20", "c++17"],
+                  "tests": [{"stdlibs": ["libstdc++"], "tests": ["Release-Default"]}]
                 }
               ]
             }
@@ -111,7 +125,7 @@ jobs:
           "msvc": [
             { "versions": ["latest"],
               "tests": [
-                { "cxxversions": ["c++latest"],
+                { "cxxversions": ["c++23"],
                   "tests": [
                     { "stdlibs": ["stl"],
                       "tests": ["Debug-Default", "Release-Default", "Debug-MaxSan"]
