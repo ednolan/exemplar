@@ -39,4 +39,28 @@ struct identity {
 
 } // namespace beman::exemplar
 
+#if __has_include("experimental/meta")
+
+#include <experimental/meta>
+#include <iostream>
+#include <cassert>
+#include <utility>
+
+struct S { unsigned i:2, j:6; };
+
+consteval auto member_number(int n) {
+  if (n == 0) return ^^S::i;
+  else if (n == 1) return ^^S::j;
+
+  std::unreachable();
+}
+
+int foo() {
+  S s{0, 0};
+  s.[:member_number(1):] = 42;  // Same as: s.j = 42;
+  std::cout << "s.i=" << s.i << ", s.j=" << s.j << '\n';
+}
+
+#endif
+
 #endif // BEMAN_EXEMPLAR_IDENTITY_HPP
