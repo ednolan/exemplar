@@ -16,9 +16,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: set-matrix
+        shell: python
         run: |
-          matrix=$(echo '${{ inputs.matrix_config }}' | ./transform.py)
-          echo "matrix=$(echo $matrix)" >> $GITHUB_OUTPUT
+          import json
+          import os
+          import sys
+
+          input_data = json.loads('''${{inputs.matrix_config}}''')
+          output_list = []
+
+          image_prefix = "ghcr.io/bemanproject/infra-containers-"
+          for compiler, compiler_tests in input_data.items():
+              for compiler_test in compiler_tests:
+                  for version in compiler_test["versions"]:
+                      image = None
+                      if compiler == "gcc" or compiler.startswith("clang"):
+                          image = image_prefix + compiler + ":" + version
+                      for versions_test in compiler_test["tests"]:
+                          for cxxversion in versions_test["cxxversions"]:
+                              for cxxversion_test in versions_test["tests"]:
+                                  for stdlib in cxxversion_test["stdlibs"]:
+                                      for stdlib_test in cxxversion_test["tests"]:
+                                          test = {
+                                              "compiler": compiler,
+                                              "version": version,
+                                              "cxxversion": cxxversion,
+                                              "stdlib": stdlib,
+                                              "test": stdlib_test
+                                          }
+                                          if image is not None:
+                                              test["image"] = image
+                                          output_list.append(test)
+          json_string = json.dumps(output_list)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output_file:
+              print(f"matrix={json_string}", file=output_file)
   test_matrix:
     needs: configure_test_matrix
     strategy:
