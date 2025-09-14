@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+name: Continuous Integration Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 16 * * 0"
+
+jobs:
+  auto-update-pre-commit:
+    uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-update-pre-commit.yml@1.0.0
