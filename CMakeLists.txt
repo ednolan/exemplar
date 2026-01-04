@@ -33,13 +33,13 @@ add_library(beman::exemplar ALIAS beman.exemplar)
 target_sources(
     beman.exemplar
     PUBLIC
-        FILE_SET HEADERS
+        FILE_SET beman_exemplar_headers TYPE HEADERS
             BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
-            FILES
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/beman/exemplar/identity.hpp"
 )
 
 set_target_properties(beman.exemplar PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
+
+add_subdirectory(include/beman/exemplar)
 
 include(CTest)
 

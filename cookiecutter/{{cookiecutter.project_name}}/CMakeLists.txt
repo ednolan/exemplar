@@ -34,13 +34,13 @@ add_library(beman::{{cookiecutter.project_name}} ALIAS beman.{{cookiecutter.proj
 target_sources(
     beman.{{cookiecutter.project_name}}
     PUBLIC
-        FILE_SET HEADERS
+        FILE_SET beman_{{cookiecutter.project_name}}_headers TYPE HEADERS
             BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
-            FILES
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/beman/{{cookiecutter.project_name}}/identity.hpp"
 )
 
 set_target_properties(beman.{{cookiecutter.project_name}} PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
+
+add_subdirectory(include/beman/{{cookiecutter.project_name}})
 {% else %}
 add_subdirectory(src/beman/{{cookiecutter.project_name}})
 {% endif %}
