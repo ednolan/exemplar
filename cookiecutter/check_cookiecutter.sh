@@ -21,6 +21,7 @@ function check_consistency() {
         godbolt_link="https://godbolt.org/z/4qEPK87va" \
         library_type="interface"
     cp "$script_dir"/../.github/workflows/cookiecutter_test.yml "$out_dir_path"/exemplar/.github/workflows
+    cp "$script_dir"/../.github/workflows/static_exemplar_test.yml "$out_dir_path"/exemplar/.github/workflows
     local diff_path
     diff_path=$(mktemp)
     diff -r "$script_dir/.." "$out_dir_path/exemplar" \

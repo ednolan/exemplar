@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+name: Static Exemplar Test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  static-exemplar-test:
+    runs-on: ubuntu-latest
+    name: "Smoke test to build and run the static version of exemplar"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Stamp out static exemplar
+        run: |
+          cd cookiecutter
+          python3 \
+              -m cookiecutter \
+              --no-input \
+              --output-dir ./static_exemplar \
+              "$PWD" \
+              project_name="exemplar" \
+              cpp_build_version="17" \
+              paper="P0898R3" \
+              owner="bemanproject" \
+              description="A Beman Library Exemplar" \
+              godbolt_link="https://godbolt.org/z/4qEPK87va" \
+              library_type="static"
+      - name: Build/test/install library
+        run: |
+          cd static_exemplar/exemplar
+          cmake -B build -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./infra/cmake/use-fetch-content.cmake -DCMAKE_CXX_STANDARD=20 -DCMAKE_INSTALL_PREFIX=$PWD/dist
+          cmake --build build
+          ctest --test-dir build
+          cmake --install build
