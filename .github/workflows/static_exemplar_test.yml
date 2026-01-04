@@ -10,27 +10,18 @@ on:
 jobs:
   static-exemplar-test:
     runs-on: ubuntu-latest
-    name: "Smoke test to build and run the static version of exemplar"
+    container: ghcr.io/bemanproject/infra-containers-gcc:latest
+    name: "Static exemplar smoke test"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Stamp out static exemplar
+      - name: Test static exemplar
         run: |
           cd cookiecutter
-          python3 \
-              -m cookiecutter \
-              --no-input \
-              --output-dir ./static_exemplar \
-              "$PWD" \
-              project_name="exemplar" \
-              cpp_build_version="17" \
-              paper="P0898R3" \
-              owner="bemanproject" \
-              description="A Beman Library Exemplar" \
-              godbolt_link="https://godbolt.org/z/4qEPK87va" \
-              library_type="static"
-      - name: Build/test/install library
-        run: |
+          source ./check_cookiecutter.sh
+          cookiecutter_venv_path=$(mktemp --directory --dry-run)
+          setup_venv "$cookiecutter_venv_path"
+          stamp "$PWD" "./static_exemplar" "static"
           cd static_exemplar/exemplar
           cmake -B build -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./infra/cmake/use-fetch-content.cmake -DCMAKE_CXX_STANDARD=20 -DCMAKE_INSTALL_PREFIX=$PWD/dist
           cmake --build build
