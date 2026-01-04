@@ -14,6 +14,3 @@ if library_type == "interface":
     src_dir = Path("src")
     if src_dir.exists():
         shutil.rmtree(src_dir)
-        print("✓ Removed src/ directory (not needed for interface library)")
-
-print("✓ Template generation complete")

@@ -41,7 +41,6 @@ target_sources(
 )
 
 set_target_properties(beman.{{cookiecutter.project_name}} PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
-
 {% else %}
 add_subdirectory(src/beman/{{cookiecutter.project_name}})
 {% endif %}

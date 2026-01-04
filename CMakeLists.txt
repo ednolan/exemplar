@@ -41,9 +41,6 @@ target_sources(
 
 set_target_properties(beman.exemplar PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
 
-find_package(beman-install-library REQUIRED)
-beman_install_library(beman.exemplar)
-
 include(CTest)
 
 find_package(beman-install-library REQUIRED)
