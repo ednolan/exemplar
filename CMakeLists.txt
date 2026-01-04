@@ -32,9 +32,7 @@ add_library(beman::exemplar ALIAS beman.exemplar)
 
 target_sources(
     beman.exemplar
-    PUBLIC
-        FILE_SET HEADERS
-            BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    PUBLIC FILE_SET HEADERS BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
 set_target_properties(beman.exemplar PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
