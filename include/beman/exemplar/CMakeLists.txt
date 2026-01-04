@@ -3,8 +3,7 @@
 target_sources(
     beman.exemplar
     PUBLIC
-        FILE_SET beman_exemplar_headers
-            TYPE HEADERS
+        FILE_SET HEADERS
             FILES
                 identity.hpp
 )

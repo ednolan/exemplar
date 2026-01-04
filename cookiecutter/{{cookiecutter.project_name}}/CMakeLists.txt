@@ -34,7 +34,7 @@ add_library(beman::{{cookiecutter.project_name}} ALIAS beman.{{cookiecutter.proj
 target_sources(
     beman.{{cookiecutter.project_name}}
     PUBLIC
-        FILE_SET beman_{{cookiecutter.project_name}}_headers TYPE HEADERS
+        FILE_SET HEADERS
             BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
