@@ -29,6 +29,9 @@ include(infra/cmake/beman-install-library-config.cmake)
 
 {% if cookiecutter.library_type == "interface" %}
 add_library(beman.{{cookiecutter.project_name}} INTERFACE)
+{% else %}
+add_library(beman.{{cookiecutter.project_name}})
+{% endif %}
 add_library(beman::{{cookiecutter.project_name}} ALIAS beman.{{cookiecutter.project_name}})
 
 target_sources(
@@ -39,7 +42,7 @@ target_sources(
 set_target_properties(beman.{{cookiecutter.project_name}} PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
 
 add_subdirectory(include/beman/{{cookiecutter.project_name}})
-{% else %}
+{% if cookiecutter.library_type == "static" %}
 add_subdirectory(src/beman/{{cookiecutter.project_name}})
 {% endif %}
 

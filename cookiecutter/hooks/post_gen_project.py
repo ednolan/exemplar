@@ -15,5 +15,3 @@ if library_type == "interface":
     src_dir = Path("src")
     if src_dir.exists():
         shutil.rmtree(src_dir)
-else:
-    os.remove(Path("include/beman/{{ cookiecutter.project_name }}/CMakeLists.txt"))
