@@ -20,3 +20,5 @@ if not generating_exemplar:
     os.rename("examples/identity_direct_usage.cpp", "examples/todo.cpp")
     os.remove("examples/identity_as_default_projection.cpp")
     os.rename("tests/beman/" + project_name + "/identity.test.cpp", "tests/beman/" + project_name + "/todo.test.cpp")
+    if library_type == "static":
+        os.rename("src/beman/" + project_name + "/identity.cpp", "src/beman/" + project_name + "/todo.cpp")
