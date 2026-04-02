@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
+{% if cookiecutter._generating_exemplar %}
 set(ALL_EXAMPLES identity_direct_usage)
 
 # Example `identity_as_default_projection` need ranges support:
@@ -14,6 +15,11 @@ else()
         "Missing range support! Skip: identity_as_default_projection"
     )
 endif()
+
+
+{% else %}
+set(ALL_EXAMPLES todo)
+{% endif %}
 
 message("Examples to be built: ${ALL_EXAMPLES}")
 
