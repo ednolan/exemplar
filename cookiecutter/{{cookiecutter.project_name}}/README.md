@@ -90,7 +90,6 @@ int main()
 {% else %}
 TODO
 {% endif %}
-
 Full runnable examples can be found in [`examples/`](examples/).
 
 ## Dependencies

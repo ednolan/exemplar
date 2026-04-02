@@ -25,7 +25,6 @@
 #include <utility> // std::forward
 
 {% endif %}
-
 namespace beman::{{cookiecutter.project_name}} {
 
 {% if cookiecutter._generating_exemplar %}
@@ -45,8 +44,7 @@ struct identity {
 {% else %}
 // TODO
 
-} // namespace beman::{{cookiecutter.project_name}}
-
 {% endif %}
+} // namespace beman::{{cookiecutter.project_name}}
 
 #endif // BEMAN_{{cookiecutter.project_name.upper()}}_{{identity.upper()}}_HPP

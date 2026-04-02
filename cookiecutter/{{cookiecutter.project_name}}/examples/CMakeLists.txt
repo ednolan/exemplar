@@ -16,11 +16,9 @@ else()
     )
 endif()
 
-
 {% else %}
 set(ALL_EXAMPLES todo)
 {% endif %}
-
 message("Examples to be built: ${ALL_EXAMPLES}")
 
 foreach(example ${ALL_EXAMPLES})

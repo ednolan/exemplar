@@ -7,7 +7,7 @@ import os
 
 project_name = "{{ cookiecutter.project_name }}"
 library_type = "{{ cookiecutter.library_type }}"
-generating_exemplar = "{{ cookiecutter._generating_exemplar }}" == "true"
+generating_exemplar = "{{ cookiecutter._generating_exemplar }}" == "True"
 
 # If interface library, remove the src/ directory (not needed for header-only)
 if library_type == "interface":

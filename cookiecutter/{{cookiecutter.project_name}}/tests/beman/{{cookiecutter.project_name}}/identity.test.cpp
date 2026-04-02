@@ -97,7 +97,6 @@ TEST_CASE("check is transparent", "[{{cookiecutter.project_name}}::check_is_tran
 {% endif %}
 #endif
 }
-
 {% else %}
 {% if cookiecutter.unit_test_library == "gtest" %}
 TEST(TodoTest, todo) {

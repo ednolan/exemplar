@@ -9,9 +9,8 @@ find_package(Catch2 3 REQUIRED)
 
 add_executable(beman.{{cookiecutter.project_name}}.tests.{{identity}})
 target_sources(beman.{{cookiecutter.project_name}}.tests.{{identity}} PRIVATE {{identity}}.test.cpp)
-
 target_link_libraries(
-     beman.{{cookiecutter.project_name}}.tests.{{identity}}
+    beman.{{cookiecutter.project_name}}.tests.{{identity}}
 {% if cookiecutter.unit_test_library == "gtest" %}
     PRIVATE beman::{{cookiecutter.project_name}} GTest::gtest GTest::gtest_main
 {% elif cookiecutter.unit_test_library == "catch2" %}
